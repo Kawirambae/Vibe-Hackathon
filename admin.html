@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Baddie's Admin Panel</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="overlay">
+    <h1>Admin – Baddie’s Monthly Maintenance 💼</h1>
+    <p>Welcome, salon staff! Log a client visit below:</p>
+
+    <div class="section">
+      <h2>➕ Log Visit</h2>
+      <form id="visit-form">
+        <label>Email: <input type="email" id="email" required /></label><br><br>
+
+        <label>Service:
+          <select id="service" required>
+            <option value="">-- Select Service --</option>
+            <optgroup label="Nails">
+              <option>Manicures</option>
+              <option>Manicures with Gel</option>
+              <option>Pedicure</option>
+              <option>Pedicure with Gel</option>
+              <option>Nail Tips</option>
+              <option>Ombre</option>
+              <option>Acrylics</option>
+            </optgroup>
+            <optgroup label="Waxing">
+              <option>Underarms</option>
+              <option>Bikini</option>
+              <option>Brazillian</option>
+              <option>Legs</option>
+              <option>Hands</option>
+              <option>Full Body</option>
+            </optgroup>
+            <optgroup label="Hair">
+              <option>Weaving</option>
+              <option>Braiding</option>
+              <option>Wash and Set</option>
+              <option>Dreadlocks</option>
+            </optgroup>
+            <optgroup label="Massage">
+              <option>Full Body</option>
+              <option>Neck and Back</option>
+            </optgroup>
+            <optgroup label="Facials">
+              <option>Full Facial</option>
+              <option>Half Facial</option>
+            </optgroup>
+          </select>
+        </label><br><br>
+
+        <button type="submit">Log Visit</button>
+        <p id="form-status"></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://uboyxjdbwtrepexzwyxm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVib3l4amRid3RyZXBleHp3eXhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyNjI0MzYsImV4cCI6MjA2MzgzODQzNn0.gF00NYC7uJIYJXgramcH2DOaK9CD-yicEwIwKqx5guY'
+    );
+
+    document.getElementById('visit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const service = document.getElementById('service').value.trim();
+      const statusEl = document.getElementById('form-status');
+
+      if (!email || !service) {
+        statusEl.textContent = 'Please fill all fields.';
+        return;
+      }
+
+      // Get or create customer
+      let { data: customer, error: customerError } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (!customer && !customerError) {
+        const { data: newCustomer } = await supabase
+          .from('customers')
+          .insert([{ email }])
+          .select()
+          .single();
+        customer = newCustomer;
+      }
+
+      if (customerError && customerError.code !== 'PGRST116') {
+        statusEl.textContent = 'Error accessing customer.';
+        return;
+      }
+
+      // Log visit
+      const { error: insertError } = await supabase
+        .from('visits')
+        .insert([{ customer_id: customer.id, service, visit_date: new Date() }]);
+
+      if (insertError) {
+        statusEl.textContent = 'Error logging visit.';
+      } else {
+        statusEl.textContent = '✅ Visit logged successfully!';
+        document.getElementById('visit-form').reset();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Baddie’s Monthly Maintenance – Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="overlay">
+    <h1>Baddie’s Monthly Maintenance 💅</h1>
+    <p>Enter your email to receive a secure login link:</p>
+
+    <input type="email" id="email" placeholder="you@example.com" required />
+    <br><br>
+    <button onclick="signIn()">Send Login Link</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://uboyxjdbwtrepexzwyxm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVib3l4amRid3RyZXBleHp3eXhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyNjI0MzYsImV4cCI6MjA2MzgzODQzNn0.gF00NYC7uJIYJXgramcH2DOaK9CD-yicEwIwKqx5guY'
+    );
+
+    async function signIn() {
+      const email = document.getElementById('email').value.trim();
+      const statusEl = document.getElementById('status');
+
+      if (!email) {
+        statusEl.textContent = "Please enter your email.";
+        return;
+      }
+
+      statusEl.textContent = "Sending magic link...";
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          redirectTo: 'https://baddie-maintenance.vercel.app/dashboard.html' // update if hosted elsewhere
+        }
+      });
+
+      if (error) {
+        statusEl.textContent = "❌ Error: " + error.message;
+      } else {
+        statusEl.textContent = "✅ Check your email for a secure login link.";
+      }
+    }
+  </script>
+</body>
+</html>

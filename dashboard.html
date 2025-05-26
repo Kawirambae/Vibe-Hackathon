@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Baddie’s Monthly Maintenance – Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="overlay">
+    <h1>Baddie’s Monthly Maintenance 💅</h1>
+    <h3>Welcome, <span id="user-email">you@example.com</span></h3>
+
+    <div class="section">
+      <h2>💅 Services Offered</h2>
+      <div class="services">
+        <div>
+          <strong>Nails</strong>
+          <ul>
+            <li>Manicures</li>
+            <li>Manicures with Gel</li>
+            <li>Pedicure</li>
+            <li>Pedicure with Gel</li>
+            <li>Nail Tips</li>
+            <li>Ombre</li>
+            <li>Acrylics</li>
+          </ul>
+          <strong>Massage</strong>
+          <ul>
+            <li>Full Body</li>
+            <li>Neck and Back</li>
+          </ul>
+        </div>
+        <div>
+          <strong>Waxing</strong>
+          <ul>
+            <li>Underarms</li>
+            <li>Bikini</li>
+            <li>Brazillian</li>
+            <li>Legs</li>
+            <li>Hands</li>
+            <li>Full Body</li>
+          </ul>
+          <strong>Hair</strong>
+          <ul>
+            <li>Weaving</li>
+            <li>Braiding</li>
+            <li>Wash and Set</li>
+            <li>Dreadlocks</li>
+          </ul>
+          <strong>Facials</strong>
+          <ul>
+            <li>Full Facial</li>
+            <li>Half Facial</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🎁 Loyalty Points</h2>
+      <p class="loyalty-points">You have <span id="points">80</span> points 🎉</p>
+      <p>✅ You're eligible for a <strong>Free Pedicure!</strong></p>
+    </div>
+
+    <div class="section">
+      <h2>🕘 Visit History</h2>
+      <ul id="visit-history">
+        <li>14 May – Braiding</li>
+        <li>10 May – Brazillian Wax</li>
+        <li>03 May – Manicure with Gel</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📅 May Calendar – Visits Marked</h2>
+      <div id="calendar" class="calendar"></div>
+    </div>
+
+    <div class="section">
+      <h2>⏰ Upcoming Reminders</h2>
+      <ul>
+        <li>Next Braiding: 14 June</li>
+        <li>Next Manicure: 3 June</li>
+        <li>Next Waxing: 10 June</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://uboyxjdbwtrepexzwyxm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVib3l4amRid3RyZXBleHp3eXhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgyNjI0MzYsImV4cCI6MjA2MzgzODQzNn0.gF00NYC7uJIYJXgramcH2DOaK9CD-yicEwIwKqx5guY'
+    );
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user?.email) {
+        document.getElementById('user-email').innerText = data.user.email;
+      }
+    });
+
+    const calendarContainer = document.getElementById('calendar');
+    const visitedDays = [3, 10, 14];
+
+    for (let i = 1; i <= 31; i++) {
+      const dayDiv = document.createElement('div');
+      dayDiv.className = visitedDays.includes(i) ? 'calendar-day visited' : 'calendar-day';
+      dayDiv.textContent = i;
+      calendarContainer.appendChild(dayDiv);
+    }
+  </script>
+</body>
+</html>
