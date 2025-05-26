@@ -62,6 +62,3 @@ Backed by the PLP Community in Kenya 🇰🇪
 
 ---
 
-## 🧾 License
-
-MIT License (feel free to remix with credit!) ❤️
